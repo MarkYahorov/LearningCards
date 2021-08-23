@@ -1,21 +1,32 @@
 package com.example.learningcards.presentor.base
 
-import com.example.learningcards.repository.DbRepository
-import com.example.learningcards.repository.DbRepositoryImpl
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
-abstract class BasePresenter<View:BaseContract.View>: BaseContract.Presenter<View> {
+abstract class BasePresenter<View : BaseContract.View> : BaseContract.Presenter<View> {
 
-    var view:View? = null
-    var repo: DbRepository? = null
+    private var view: View? = null
+    private var disposable: CompositeDisposable? = null
 
     override fun attach(view: View) {
         this.view = view
-        this.repo = DbRepositoryImpl()
+        this.disposable = CompositeDisposable()
     }
 
     override fun detach() {
+        this.disposable?.dispose()
+        this.disposable = null
         this.view = null
-        this.repo = null
     }
 
+    protected fun isViewAttached(): Boolean {
+        return view != null
+    }
+
+    protected fun getView(): View {
+        return view ?: error("View is not attached")
+    }
+
+    protected fun getCompositeDisposable(): CompositeDisposable {
+        return disposable ?: error("is not created")
+    }
 }

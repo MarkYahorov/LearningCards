@@ -6,8 +6,8 @@ import com.example.learningcards.presentor.base.BaseContract
 interface CategoryScreenContract {
 
     interface ViewCategoryList : BaseContract.View {
-        fun showError()
-        fun showLoading(list: List<Category>)
+        fun showError(error: String?)
+        fun setData(list: List<Category>)
     }
 
 
