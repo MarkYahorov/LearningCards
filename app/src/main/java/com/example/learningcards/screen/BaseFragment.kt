@@ -32,7 +32,7 @@ abstract class BaseFragment<Presenter : BaseContract.Presenter<View>, View : Bas
     abstract fun createPresenter(): Presenter
 
     open fun getMVPView(): View {
-        return this as? View ?: error("cannot cast")
+        return this as? View ?: error("noView")
     }
 
     protected fun getPresenter(): Presenter {

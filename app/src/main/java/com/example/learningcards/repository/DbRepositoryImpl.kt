@@ -7,7 +7,6 @@ import com.example.learningcards.data.DataBase.Companion.ID
 import com.example.learningcards.data.DataBase.Companion.NAME_OF_CATEGORY
 import com.example.learningcards.data.helpersDb.SelectFromDbHelper
 import com.example.learningcards.models.Category
-import io.reactivex.rxjava3.annotations.NonNull
 import io.reactivex.rxjava3.core.Observable
 import java.util.concurrent.Callable
 
