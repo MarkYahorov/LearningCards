@@ -44,6 +44,7 @@ class CategoryFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
+        getPresenter().loadCategoryList()
     }
 
     override fun onStart() {
@@ -56,7 +57,7 @@ class CategoryFragment :
             this?.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             this?.adapter = CategoryListAdapter(list) {
-                navigator?.goToCurrentCategoryScreen()
+                navigator?.goToCurrentCategoryScreen(it.id)
             }
         }
     }
