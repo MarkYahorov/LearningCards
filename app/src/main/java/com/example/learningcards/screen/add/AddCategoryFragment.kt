@@ -7,12 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.learningcards.AddCategoryNavigator
 import com.example.learningcards.App
 import com.example.learningcards.R
+import com.example.learningcards.models.Category
 import com.example.learningcards.models.TranslateWord
 import com.example.learningcards.presentor.addCategory.AddCategoryContract
 import com.example.learningcards.presentor.addCategory.AddCategoryPresenter
@@ -22,11 +25,22 @@ class AddCategoryFragment :
     BaseFragment<AddCategoryContract.AddCategoryPresenter, AddCategoryContract.AddCategoryView>(),
     AddCategoryContract.AddCategoryView {
 
+    companion object {
+        private const val CURRENT_CATEGORY = "CURRENT_CATEGORY"
+        fun newInstance(category:Category?): AddCategoryFragment {
+            val addCategoryFragment = AddCategoryFragment()
+            val bundle = Bundle()
+            bundle.putParcelable(CURRENT_CATEGORY, category)
+            addCategoryFragment.arguments = bundle
+            return addCategoryFragment
+        }
+    }
 
     private var categoryName: EditText? = null
     private var addCategoryBtn: Button? = null
     private var cancelCategoryBtn: Button? = null
     private var translateRecycler: RecyclerView? = null
+    private var nameOfCategory: TextView? = null
     private val translateList = mutableListOf<TranslateWord>()
     private var closeScreen: AddCategoryNavigator? = null
 
@@ -50,11 +64,23 @@ class AddCategoryFragment :
         addCategoryBtn = view.findViewById(R.id.save_category_btn)
         cancelCategoryBtn = view.findViewById(R.id.cancel_category_btn)
         translateRecycler = view.findViewById(R.id.translate_recycler)
+        nameOfCategory = view.findViewById(R.id.name_cat)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
+        checkCategory()
+    }
+
+    private fun checkCategory(){
+        if (arguments?.getParcelable<Category>(CURRENT_CATEGORY) != null){
+            val category = arguments?.getParcelable<Category>(CURRENT_CATEGORY)
+            nameOfCategory?.isVisible = true
+            nameOfCategory?.text = category?.name
+            addCategoryBtn?.isVisible = false
+            cancelCategoryBtn?.isVisible = false
+        }
     }
 
     private fun initRecycler() {
@@ -65,7 +91,7 @@ class AddCategoryFragment :
                 addTranslate = {
 
                 }, addNewItem = {
-                    translateList.add(TranslateWord(translateList.size + 1, null, null, null))
+                    translateList.add(TranslateWord(translateList.size + 1, null, null, null, true))
                     this?.adapter?.notifyDataSetChanged()
                 }, showDialogNoEmptyString = {
                     createAlert("Enter all words")

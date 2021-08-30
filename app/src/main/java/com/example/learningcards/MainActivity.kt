@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), NavigatorInCategoryScreen, AddCategory
     override fun goToAddCategoryScreen() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container, AddCategoryFragment())
+            .replace(R.id.fragment_container, AddCategoryFragment.newInstance(null))
             .addToBackStack(ADD_CATEGORY_SCREEN)
             .commit()
     }

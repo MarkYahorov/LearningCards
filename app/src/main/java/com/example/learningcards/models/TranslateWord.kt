@@ -4,5 +4,6 @@ data class TranslateWord(
     val id: Int,
     var firstWord: String?,
     var secondWord: String?,
-    var categoryId: Int?
+    var categoryId: Int?,
+    var isNewWord: Boolean = false
 )

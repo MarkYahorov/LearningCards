@@ -33,14 +33,17 @@ class TranslateWordAdapter(
         private val secondWord = item.findViewById<EditText>(R.id.second_word)
 
         fun bind(translateWord: TranslateWord) {
-            addBtn.setOnClickListener {
-                if (!firstWord.text.isNullOrEmpty() && !secondWord.text.isNullOrEmpty()) {
-                    translateWord.firstWord = firstWord.text.toString()
-                    translateWord.secondWord = secondWord.text.toString()
-                    addTranslate(translateWord)
-                    addBtn.isVisible = false
-                } else {
-                    showDialogNoEmptyString()
+            if (translateWord.isNewWord) {
+                addBtn.isVisible = true
+                addBtn.setOnClickListener {
+                    if (!firstWord.text.isNullOrEmpty() && !secondWord.text.isNullOrEmpty()) {
+                        translateWord.firstWord = firstWord.text.toString()
+                        translateWord.secondWord = secondWord.text.toString()
+                        addTranslate(translateWord)
+                        addBtn.isVisible = false
+                    } else {
+                        showDialogNoEmptyString()
+                    }
                 }
             }
         }
