@@ -20,15 +20,17 @@ import com.example.learningcards.models.TranslateWord
 import com.example.learningcards.presentor.addCategory.AddCategoryContract
 import com.example.learningcards.presentor.addCategory.AddCategoryPresenter
 import com.example.learningcards.screen.BaseFragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class AddCategoryFragment :
+class AddOrCurrentCategoryFragment :
     BaseFragment<AddCategoryContract.AddCategoryPresenter, AddCategoryContract.AddCategoryView>(),
     AddCategoryContract.AddCategoryView {
 
     companion object {
         private const val CURRENT_CATEGORY = "CURRENT_CATEGORY"
-        fun newInstance(category:Category?): AddCategoryFragment {
-            val addCategoryFragment = AddCategoryFragment()
+        private const val OLD_LIST_SIZE = "OLD_LIST_SIZE"
+        fun newInstance(category: Category?): AddOrCurrentCategoryFragment {
+            val addCategoryFragment = AddOrCurrentCategoryFragment()
             val bundle = Bundle()
             bundle.putParcelable(CURRENT_CATEGORY, category)
             addCategoryFragment.arguments = bundle
@@ -41,8 +43,10 @@ class AddCategoryFragment :
     private var cancelCategoryBtn: Button? = null
     private var translateRecycler: RecyclerView? = null
     private var nameOfCategory: TextView? = null
+    private var fab: FloatingActionButton? = null
     private val translateList = mutableListOf<TranslateWord>()
     private var closeScreen: AddCategoryNavigator? = null
+    private var oldListSize = 0
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -65,21 +69,42 @@ class AddCategoryFragment :
         cancelCategoryBtn = view.findViewById(R.id.cancel_category_btn)
         translateRecycler = view.findViewById(R.id.translate_recycler)
         nameOfCategory = view.findViewById(R.id.name_cat)
+        fab = view.findViewById(R.id.save_list_in_current)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
         checkCategory()
+        if (savedInstanceState == null) {
+            oldListSize = translateList.size
+        } else {
+            oldListSize = savedInstanceState.getInt(OLD_LIST_SIZE)
+        }
     }
 
-    private fun checkCategory(){
-        if (arguments?.getParcelable<Category>(CURRENT_CATEGORY) != null){
-            val category = arguments?.getParcelable<Category>(CURRENT_CATEGORY)
+    private fun checkCategory() {
+        val category = arguments?.getParcelable<Category>(CURRENT_CATEGORY)
+        if (category != null) {
             nameOfCategory?.isVisible = true
-            nameOfCategory?.text = category?.name
+            nameOfCategory?.text = category.name
             addCategoryBtn?.isVisible = false
             cancelCategoryBtn?.isVisible = false
+            fab?.isVisible = true
+            getPresenter().loadAllWordsToCurrentCategory(category.id)
+            fabListener(category)
+        }
+    }
+
+    private fun fabListener(category: Category){
+        fab?.setOnClickListener {
+            val newWordList = mutableListOf<TranslateWord>()
+            oldListSize = translateList.size - oldListSize
+            while (oldListSize!=0){
+                newWordList.add(translateList[translateList.size-oldListSize])
+                oldListSize-1
+            }
+            getPresenter().addListOFWords(category.id, newWordList,closeScreen)
         }
     }
 
@@ -107,7 +132,7 @@ class AddCategoryFragment :
 
     private fun saveBtnListener() {
         addCategoryBtn?.setOnClickListener {
-            if (!categoryName?.text.isNullOrEmpty()) {
+            if (!categoryName?.text.isNullOrBlank()) {
                 getPresenter().addCategory(categoryName?.text.toString(), translateList)
                 closeScreen?.closeScreen()
             } else {
@@ -132,6 +157,11 @@ class AddCategoryFragment :
 
     override fun showResult(message: String) {
         createAlert(message)
+    }
+
+    override fun setData(list: List<TranslateWord>) {
+        translateList.addAll(list)
+        translateRecycler?.adapter?.notifyDataSetChanged()
     }
 
     private fun createAlert(error: String?): AlertDialog? {

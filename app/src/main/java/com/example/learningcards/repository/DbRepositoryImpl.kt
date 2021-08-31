@@ -108,8 +108,21 @@ class DbRepositoryImpl : DbRepository {
         return Observable.fromCallable(callable)
     }
 
-    override fun addTranslateWords(): Observable<Unit> {
-        TODO("Not yet implemented")
+    override fun addTranslateWords(
+        id: Int,
+        listOfTranslateWords: List<TranslateWord>,
+    ): Observable<Unit> {
+        val callable = Callable {
+            listOfTranslateWords.forEach {
+                InsertIntoDBHelper()
+                    .setTableName(TRANSLATE_WORD_TABLE_NAME)
+                    .addFieldsAndValuesToInsert(FIRST_WORD, it.firstWord)
+                    .addFieldsAndValuesToInsert(SECOND_WORD, it.secondWord)
+                    .addFieldsAndValuesToInsert(CATEGORY_ID, id.toString())
+                    .insertTheValues(App.INSTANCE.db)
+            }
+        }
+        return Observable.fromCallable(callable)
     }
 
     private fun createTranslateWordIndex(cursor: Cursor) = TranslateWordIndex(

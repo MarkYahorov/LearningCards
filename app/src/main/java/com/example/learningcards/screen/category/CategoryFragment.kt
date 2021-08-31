@@ -57,7 +57,7 @@ class CategoryFragment :
             this?.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             this?.adapter = CategoryListAdapter(list) {
-                navigator?.goToCurrentCategoryScreen(it.id)
+                navigator?.goToCurrentCategoryScreen(it)
             }
         }
     }

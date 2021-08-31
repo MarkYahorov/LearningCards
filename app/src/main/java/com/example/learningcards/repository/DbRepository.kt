@@ -9,5 +9,5 @@ interface DbRepository {
     fun getListCategories(): Observable<List<Category>>
     fun addCategory(name: String, listOfTranslateWords: List<TranslateWord>): Observable<Unit>
     fun getListOfTranslateWords(id: Int): Observable<List<TranslateWord>>
-    fun addTranslateWords(): Observable<Unit>
+    fun addTranslateWords(id: Int, listOfTranslateWords: List<TranslateWord>): Observable<Unit>
 }

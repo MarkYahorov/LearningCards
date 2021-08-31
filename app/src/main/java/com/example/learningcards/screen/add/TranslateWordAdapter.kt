@@ -45,6 +45,11 @@ class TranslateWordAdapter(
                         showDialogNoEmptyString()
                     }
                 }
+            } else {
+                firstWord.setText(translateWord.firstWord)
+                secondWord.setText(translateWord.secondWord)
+                firstWord.isEnabled = false
+                secondWord.isEnabled = false
             }
         }
 

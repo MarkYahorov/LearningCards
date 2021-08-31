@@ -2,7 +2,8 @@ package com.example.learningcards
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.learningcards.screen.add.AddCategoryFragment
+import com.example.learningcards.models.Category
+import com.example.learningcards.screen.add.AddOrCurrentCategoryFragment
 import com.example.learningcards.screen.category.CategoryFragment
 
 class MainActivity : AppCompatActivity(), NavigatorInCategoryScreen, AddCategoryNavigator {
@@ -27,13 +28,17 @@ class MainActivity : AppCompatActivity(), NavigatorInCategoryScreen, AddCategory
     override fun goToAddCategoryScreen() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container, AddCategoryFragment.newInstance(null))
+            .replace(R.id.fragment_container, AddOrCurrentCategoryFragment.newInstance(null))
             .addToBackStack(ADD_CATEGORY_SCREEN)
             .commit()
     }
 
-    override fun goToCurrentCategoryScreen(id: Int) {
-        TODO("Not yet implemented")
+    override fun goToCurrentCategoryScreen(category: Category) {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, AddOrCurrentCategoryFragment.newInstance(category))
+            .addToBackStack(ADD_CATEGORY_SCREEN)
+            .commit()
     }
 
     override fun closeScreen() {
